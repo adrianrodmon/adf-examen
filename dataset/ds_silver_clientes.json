@@ -1,0 +1,41 @@
+{
+	"name": "ds_silver_clientes",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_examen",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Silver"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "cst_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "cst_key",
+				"type": "varchar"
+			},
+			{
+				"name": "nombre_completo",
+				"type": "varchar"
+			},
+			{
+				"name": "estado_civil",
+				"type": "varchar"
+			},
+			{
+				"name": "genero",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "SILVER",
+			"table": "CLIENTES"
+		}
+	}
+}
