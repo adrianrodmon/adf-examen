@@ -1,0 +1,17 @@
+{
+	"name": "ls_sql_examen",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"server": "sql-ucb-sisinfo-examen-8051738.database.windows.net",
+			"database": "dw_examen",
+			"encrypt": "mandatory",
+			"trustServerCertificate": false,
+			"authenticationType": "SQL",
+			"userName": "adrian",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDdGODIzNzE4LTMxQUMtNDdGQy1CQzNGLTI5QkNCRUIxNzBDN19kNTlhMmJlMC02ZWQzLTQ1OGUtYWI3Ny02ZmIwOTk1Mzc5ZmQiDQp9"
+		}
+	}
+}
