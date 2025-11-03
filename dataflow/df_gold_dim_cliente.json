@@ -1,0 +1,79 @@
+{
+	"name": "df_gold_dim_cliente",
+	"properties": {
+		"folder": {
+			"name": "Gold"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_silver_clientes",
+						"type": "DatasetReference"
+					},
+					"name": "clientes"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_silver_clientes_location",
+						"type": "DatasetReference"
+					},
+					"name": "clienteslocation"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_silver_clientesBDGEN",
+						"type": "DatasetReference"
+					},
+					"name": "clientesBDGEN"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "join1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          cst_id as integer,",
+				"          cst_key as string,",
+				"          nombre_completo as string,",
+				"          estado_civil as string,",
+				"          genero as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> clientes",
+				"source(output(",
+				"          CID as string,",
+				"          pais as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> clienteslocation",
+				"source(output(",
+				"          CID as string,",
+				"          fecha_nacimiento as date,",
+				"          genero as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> clientesBDGEN",
+				"clienteslocation derive(Clean_CID = replace(replace(replace(CID, '-', ''), 'NASA', ''), 'AW', 'AW')) ~> derivedColumn1",
+				"clientes, derivedColumn1 join(cst_key == Clean_CID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1"
+			]
+		}
+	}
+}
