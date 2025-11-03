@@ -1,0 +1,82 @@
+{
+	"name": "df_silver_limpiar_datos_productos_catmant",
+	"properties": {
+		"folder": {
+			"name": "Silver"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_bz_productos_CAT_MANT",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_silver_productos_cat_mant",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ID as string,",
+				"          CAT as string,",
+				"          SUBCAT as string,",
+				"          MAINTENANCE as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"source1 derive(categoria = trim(CAT),",
+				"          subcategoria = trim(SUBCAT),",
+				"          mantenimiento = iif(MAINTENANCE == 'Yes', 'Sí', 'No')) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          ID,",
+				"          categoria,",
+				"          subcategoria,",
+				"          mantenimiento",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ID as string,",
+				"          categoria as string,",
+				"          subcategoria as string,",
+				"          mantenimiento as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          ID,",
+				"          categoria,",
+				"          subcategoria,",
+				"          mantenimiento",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}
