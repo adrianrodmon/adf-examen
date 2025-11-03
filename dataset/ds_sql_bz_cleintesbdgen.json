@@ -1,0 +1,33 @@
+{
+	"name": "ds_sql_bz_cleintesbdgen",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_examen",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Bronze"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "CID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "BDATE",
+				"type": "varchar"
+			},
+			{
+				"name": "GEN",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "BRONZE",
+			"table": "CLIENTES_BDGEN"
+		}
+	}
+}

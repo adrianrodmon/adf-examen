@@ -1,0 +1,39 @@
+{
+	"name": "ds_clientedBDGEN",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sa_examen",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Bronze"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Clientes_BD-GEN.csv",
+				"container": "raw-examen"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "CID",
+				"type": "String"
+			},
+			{
+				"name": "BDATE",
+				"type": "String"
+			},
+			{
+				"name": "GEN",
+				"type": "String"
+			}
+		]
+	}
+}
