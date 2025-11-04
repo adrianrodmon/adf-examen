@@ -29,13 +29,30 @@
 					"name": "clientesBDGEN"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_gold_clientes",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "derivedColumn1"
 				},
 				{
 					"name": "join1"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "join2"
+				},
+				{
+					"name": "select1"
 				}
 			],
 			"scriptLines": [
@@ -68,11 +85,57 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> clientesBDGEN",
 				"clienteslocation derive(Clean_CID = replace(replace(replace(CID, '-', ''), 'NASA', ''), 'AW', 'AW')) ~> derivedColumn1",
-				"clientes, derivedColumn1 join(cst_key == Clean_CID,",
+				"clientes, derivedColumn2 join(cst_key == Clean_CID,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> join1"
+				"     broadcast: 'auto')~> join1",
+				"clientesBDGEN derive(Clean_CID = replace(replace(replace(CID, '-', ''), 'NAS', ''), 'AW', 'AW')) ~> derivedColumn2",
+				"join1, derivedColumn1 join(derivedColumn2@Clean_CID == derivedColumn1@Clean_CID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join2",
+				"join2 select(mapColumn(",
+				"          cst_id,",
+				"          cst_key,",
+				"          nombre_completo,",
+				"          estado_civil,",
+				"          genero = clientes@genero,",
+				"          fecha_nacimiento,",
+				"          pais",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          id_cliente as integer,",
+				"          cst_id as integer,",
+				"          cst_key as string,",
+				"          nombre_completo as string,",
+				"          estado_civil as string,",
+				"          genero as string,",
+				"          fecha_nacimiento as date,",
+				"          pais as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          cst_id,",
+				"          cst_key,",
+				"          nombre_completo,",
+				"          estado_civil,",
+				"          genero,",
+				"          fecha_nacimiento,",
+				"          pais",
+				"     )) ~> sink1"
 			]
 		}
 	}

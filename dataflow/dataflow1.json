@@ -1,0 +1,65 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"folder": {
+			"name": "Gold"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_silver_productos_cat_mant",
+						"type": "DatasetReference"
+					},
+					"name": "productosCATMANT"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_sql_gold_producto",
+						"type": "DatasetReference"
+					},
+					"name": "productos"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "join1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ID as string,",
+				"          categoria as string,",
+				"          subcategoria as string,",
+				"          mantenimiento as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> productosCATMANT",
+				"source(output(",
+				"          id_producto as integer,",
+				"          prd_id as integer,",
+				"          prd_key as string,",
+				"          nombre_producto as string,",
+				"          costo as decimal(10,2),",
+				"          linea as string,",
+				"          categoria as string,",
+				"          subcategoria as string,",
+				"          mantenimiento as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> productos",
+				"productos, productosCATMANT join(prd_key == ID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1"
+			]
+		}
+	}
+}
